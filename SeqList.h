@@ -14,6 +14,7 @@ protected:
     T* m_array; //顺序存储空间
     int m_length;  //当前线性表长度
 public:
+
     bool insert(int i, const T& e)
     {
         bool ret = ((0 <= i) && (i <= m_length));
@@ -31,6 +32,10 @@ public:
         }
 
         return ret;
+    }
+    bool insert(const T& e)
+    {
+        return insert(m_length, e);
     }
     bool remove(int i)
     {
