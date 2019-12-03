@@ -1,4 +1,4 @@
-#ifndef ARRAY_H
+﻿#ifndef ARRAY_H
 #define ARRAY_H
 
 #include "Object.h"
@@ -19,6 +19,8 @@ public:
         {
             m_array[i] = e;
         }
+
+        return ret;
     }
     virtual bool get(int i, T& e) const
     {
@@ -27,6 +29,7 @@ public:
         {
             e = m_array[i];
         }
+        return ret;
     }
 
     //数组访问操作符
