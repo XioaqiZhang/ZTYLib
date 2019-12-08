@@ -22,7 +22,10 @@ protected:
         char reserved[sizeof(T)];
         Node* Next;
     } m_header;
+
     int m_length;
+    int m_step;
+    Node* m_current;
 
     Node* position(int i) const
     {
@@ -35,11 +38,22 @@ protected:
 
         return ret;
     }
+
+    virtual Node* create()
+    {
+        return new Node();
+    }
+    virtual void destory(Node* pn)
+    {
+        delete pn;
+    }
 public:
     LinkList()
     {
         m_header.Next = NULL;
         m_length = 0;
+        m_step = 1;
+        m_current = NULL;
     }
     bool insert(const T& e)
     {
@@ -50,7 +64,7 @@ public:
         bool ret = ((0 <= i) && (i <= m_length));
         if(ret)
         {
-            Node* node = new Node();
+            Node* node = create();
 
             if(node != NULL)
             {
@@ -84,12 +98,12 @@ public:
 
             Node* toDel = current->Next;
             current->Next = toDel->Next;
-            delete toDel;
+            destory(toDel);
             m_length--;
         }
         else
         {
-            THROW_EXCEPTION(IndexOutOfBounds, "indes is out of list bounds ...");
+            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
         }
 
         return ret;
@@ -103,7 +117,7 @@ public:
         }
         else
         {
-            THROW_EXCEPTION(IndexOutOfBounds, "indes is out of list bounds ...");
+            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
         }
         return ret;
     }
@@ -125,7 +139,7 @@ public:
         }
         else
         {
-            THROW_EXCEPTION(IndexOutOfBounds, "indes is out of list bounds ...");
+            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
         }
         return ret;
     }
@@ -161,8 +175,50 @@ public:
         {
             Node* toDel = m_header.Next;
             m_header.Next = toDel->Next;
-            delete  toDel;
+            destory(toDel);
         }
+    }
+    bool move(int i, int step = 1)
+    {
+        bool ret = ((0 <= i) && (i < m_length) && (0 < step));
+
+        if(ret)
+        {
+            m_current = position(i)->Next;
+            m_step = step;
+        }
+        else
+        {
+            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
+        }
+        return ret;
+    }
+    bool end()
+    {
+        return (m_current == NULL);
+    }
+    T current()
+    {
+        if(!end())
+        {
+            return m_current->value;
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "No value at current position ...");
+        }
+    }
+    bool next()
+    {
+        int i=0;
+
+        while((i < m_step) && (!end()))
+        {
+            m_current = m_current->Next;
+            i++;
+        }
+
+        return (i == m_step);
     }
     ~LinkList()
     {
