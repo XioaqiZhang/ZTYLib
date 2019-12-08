@@ -1,4 +1,4 @@
-#ifndef SEQLIST_H
+﻿#ifndef SEQLIST_H
 #define SEQLIST_H
 
 #include "List.h"
@@ -70,6 +70,21 @@ public:
         if(ret)
         {
             e = m_array[i];
+        }
+
+        return ret;
+    }
+    int find(const T& e) const
+    {
+        int ret = -1;
+
+        for(int i=0; i<m_length; i++)
+        {
+            if(m_array[i] == e)
+            {
+                ret = i;
+                break;
+            }
         }
 
         return ret;
