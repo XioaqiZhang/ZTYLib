@@ -129,6 +129,28 @@ public:
         }
         return ret;
     }
+    int find(const T& e) const
+    {
+        int ret = -1;
+        int i=0;
+        Node* node = m_header.Next;
+
+        while(node)
+        {
+            if(node->value == e)
+            {
+                ret = i;
+                break;
+            }
+            else
+            {
+                node = node->Next;
+                i++;
+            }
+        }
+
+        return ret;
+    }
     int length() const
     {
         return m_length;

@@ -1,4 +1,4 @@
-#include "Object.h"
+﻿#include "Object.h"
 #include <cstdlib>
 
 namespace ZTYLib
@@ -18,6 +18,14 @@ void* Object:: operator new[] (unsigned int size) throw()
 void Object:: operator delete[] (void* p)
 {
     free(p);
+}
+bool Object::operator == (const Object& obj)
+{
+    return (this == &obj);
+}
+bool Object::operator != (const Object& obj)
+{
+    return (this != &obj);
 }
 Object::~Object()
 {
