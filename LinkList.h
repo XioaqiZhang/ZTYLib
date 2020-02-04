@@ -43,7 +43,7 @@ protected:
     {
         return new Node();
     }
-    virtual void destory(Node* pn)
+    virtual void destroy(Node* pn)
     {
         delete pn;
     }
@@ -98,7 +98,7 @@ public:
 
             Node* toDel = current->Next;
             current->Next = toDel->Next;
-            destory(toDel);
+            destroy(toDel);
             m_length--;
         }
         else
@@ -126,7 +126,14 @@ public:
     {
         T ret;
 
-        get(i,ret);
+        if(get(i,ret))
+        {
+            return ret;
+        }
+        else
+        {
+            THROW_EXCEPTION(IndexOutOfBounds, "Invalid parameter i to get element ...");
+        }
 
         return ret;
     }
@@ -175,7 +182,7 @@ public:
         {
             Node* toDel = m_header.Next;
             m_header.Next = toDel->Next;
-            destory(toDel);
+            destroy(toDel);
         }
     }
     bool move(int i, int step = 1)
