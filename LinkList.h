@@ -95,11 +95,18 @@ public:
         if(ret)
         {
             Node* current = position(i);
-
             Node* toDel = current->Next;
+
+            if(m_current == toDel)
+            {
+                m_current = toDel->Next;
+            }
+
             current->Next = toDel->Next;
-            destroy(toDel);
+
             m_length--;
+
+            destroy(toDel);
         }
         else
         {
@@ -182,6 +189,9 @@ public:
         {
             Node* toDel = m_header.Next;
             m_header.Next = toDel->Next;
+
+            m_length--;
+
             destroy(toDel);
         }
     }

@@ -56,7 +56,7 @@ protected:
         }
     }
 public:
-    DynamicArray(int length)
+    DynamicArray(int length = 0)
     {
         init(new T[length], length);
     }
@@ -69,7 +69,7 @@ public:
     {
         if(this != &obj)
         {
-            update(copy(obj.m_array, obj.m_length, obj.m_length), obj.m_array);
+            update(copy(obj.m_array, obj.m_length, obj.m_length), obj.m_length);
         }
         return *this;
     }
@@ -82,7 +82,7 @@ public:
     {
         if(length != m_length)
         {
-            update(copy(this->m_array, this->m_length, length), length);
+            update(copy(this->m_array, m_length, length), length);
         }
     }
 
