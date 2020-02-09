@@ -1,57 +1,43 @@
-#ifndef SMARTPOINTER_H
+﻿#ifndef SMARTPOINTER_H
 #define SMARTPOINTER_H
 
-#include "Object.h"
+#include "Pointer.h"
 namespace ZTYLib
 {
 
 template <typename T>
 
-class SmartPointer : public Object
+class SmartPointer : public Pointer<T>
 {
-protected:
-    T* m_pointer;
-
 public:
-    SmartPointer(T* p = NULL)
+    SmartPointer(T* p = NULL) : Pointer<T>(p)
     {
-        m_pointer = p;
+
     }
     SmartPointer(const SmartPointer<T>& obj)
     {
-        m_pointer = obj.m_pointer;
+        this->m_pointer = obj.m_pointer;
         const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
     }
     SmartPointer<T>& operator= (const SmartPointer<T>& obj)
     {
-        if(m_pointer != obj.m_pointer)
+        if(this != &obj)
         {
-            m_pointer = obj.m_pointer;
+            T* p = this->m_pointer;
+
+            this->m_pointer = obj.m_pointer;
+
             const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
+
+            delete p;
         }
 
         return *this;
     }
-    T* operator->()
-    {
-        return m_pointer;
-    }
-    T& operator*()
-    {
-        return *m_pointer;
-    }
-    bool IsNull()
-    {
-        return (m_pointer == NULL);
-    }
-    T* Get()
-    {
-        return m_pointer;
-    }
 
     ~SmartPointer()
     {
-        delete m_pointer;
+        delete this->m_pointer;
     }
 };
 
