@@ -43,6 +43,7 @@ protected:
     {
         return new Node();
     }
+
     virtual void destroy(Node* pn)
     {
         delete pn;
@@ -55,11 +56,13 @@ public:
         m_step = 1;
         m_current = NULL;
     }
-    bool insert(const T& e)
+
+    virtual bool insert(const T& e)
     {
         return insert(m_length,e);
     }
-    bool insert(int i, const T& e)
+
+    virtual bool insert(int i, const T& e)
     {
         bool ret = ((0 <= i) && (i <= m_length));
         if(ret)
@@ -88,7 +91,8 @@ public:
 
         return ret;
     }
-    bool remove(int i)
+
+    virtual bool remove(int i)
     {
         bool ret = ((0 <= i) && (i < m_length));
 
@@ -115,7 +119,8 @@ public:
 
         return ret;
     }
-    bool set(int i, const T& e)
+
+    virtual bool set(int i, const T& e)
     {
         bool ret = ((0 <= i) && (i < m_length));
         if(ret)
@@ -129,7 +134,7 @@ public:
         return ret;
     }
 
-    T get(int i)
+    virtual T get(int i)
     {
         T ret;
 
@@ -144,7 +149,8 @@ public:
 
         return ret;
     }
-    bool get(int i, T& e) const
+
+    virtual bool get(int i, T& e) const
     {
         bool ret = ((0 <= i) && (i < m_length));
         if(ret)
@@ -157,7 +163,8 @@ public:
         }
         return ret;
     }
-    int find(const T& e) const
+
+    virtual int find(const T& e) const
     {
         int ret = -1;
         int i=0;
@@ -179,10 +186,12 @@ public:
 
         return ret;
     }
+
     int length() const
     {
         return m_length;
     }
+
     void clear()
     {
         while(m_header.Next)
@@ -195,7 +204,8 @@ public:
             destroy(toDel);
         }
     }
-    bool move(int i, int step = 1)
+
+    virtual bool move(int i, int step = 1)
     {
         bool ret = ((0 <= i) && (i < m_length) && (0 < step));
 
@@ -210,11 +220,13 @@ public:
         }
         return ret;
     }
-    bool end()
+
+    virtual bool end()
     {
         return (m_current == NULL);
     }
-    T current()
+
+    virtual T current()
     {
         if(!end())
         {
@@ -225,7 +237,8 @@ public:
             THROW_EXCEPTION(InvalidOperationException, "No value at current position ...");
         }
     }
-    bool next()
+
+    virtual bool next()
     {
         int i=0;
 
@@ -237,6 +250,7 @@ public:
 
         return (i == m_step);
     }
+
     ~LinkList()
     {
         clear();
