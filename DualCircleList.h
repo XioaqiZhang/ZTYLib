@@ -1,0 +1,4 @@
+#ifndef DUALCIRCLELIST_H
+#define DUALCIRCLELIST_H
+
+#endif // DUALCIRCLELIST_H
