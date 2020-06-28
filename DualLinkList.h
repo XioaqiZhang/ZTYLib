@@ -1,4 +1,4 @@
-#ifndef DUALLINKLIST_H
+﻿#ifndef DUALLINKLIST_H
 #define DUALLINKLIST_H
 
 #include "List.h"
@@ -158,7 +158,7 @@ public:
         return ret;
     }
 
-    virtual T get(int i)
+    virtual T get(int i) const
     {
         T ret;
 
