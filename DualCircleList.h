@@ -83,11 +83,11 @@ public:
 
         i = mod(i);
 
-        ret = ((0 <= i)&&(i <= this->m_length));
+        ret = ((0 <= i)&&(i < this->m_length));
 
         if(ret)
         {
-            list_head* toDel = position(i);
+            list_head* toDel = position(i)->next;
             if(m_current == toDel)
             {
                 m_current = toDel->next;
