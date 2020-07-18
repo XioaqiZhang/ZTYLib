@@ -134,7 +134,7 @@ public:
         return ret;
     }
 
-    virtual T get(int i)
+    virtual T get(int i) const
     {
         T ret;
 

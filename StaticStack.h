@@ -11,7 +11,7 @@ template <typename T, int N>
 class StaticStack : public Stack<T>
 {
 protected:
-    int m_space[N];  //栈存储空间
+    T m_space[N];  //栈存储空间
     int m_top;      //栈顶标识
     int m_size;     //当前栈的大小
 public:

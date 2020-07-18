@@ -1,48 +1,80 @@
 ﻿#include <iostream>
-#include "DualCircleList.h"
+//#include "StaticStack.h"
+#include "LinkStack.h"
 
 
 using namespace std;
 using namespace ZTYLib;
 
+bool is_left(char c)
+{
+    return ((c == '(') || (c == '<') || (c == '{' ) || (c == '['));
+}
 
+bool is_right(char c)
+{
+    return ((c == ')') || (c == '>') || (c == '}' ) || (c == ']'));
+}
+
+bool is_quot(char c)
+{
+    return ((c == '\'') || (c == '\"'));
+}
+
+bool is_match(char l, char r)
+{
+    return ((l == '(') && (r == ')')) ||
+            ((l == '<') && (r == '>')) ||
+            ((l == '[') && (r == ']')) ||
+            ((l == '{') && (r == '}')) ||
+            ((l == '\'') && (r == '\'')) ||
+            ((l == '\"') && (r == '\"'));
+}
+
+bool scan(const char* code)
+{
+    LinkStack<char> stack;
+    int i = 0;
+    bool ret = true;
+
+    code = (code == NULL)?"":code;
+
+    while(ret && (code[i] != '\0'))
+    {
+        if( is_left(code[i]) )
+        {
+            stack.push(code[i]);
+        }
+        else if( is_right(code[i]) )
+        {
+            if( (stack.size() > 0) && is_match(stack.top(), code[i]) )
+            {
+                stack.pop();
+            }
+            else
+            {
+                ret = false;
+            }
+        }
+        else if( is_quot(code[i]) )
+        {
+            if((stack.size() == 0) || !is_match(stack.top(), code[i]))
+            {
+                stack.push(code[i]);
+            }
+            else if(is_match(stack.top(),code[i]))
+            {
+                stack.pop();
+            }
+        }
+        i++;
+    }
+
+    return ret && (stack.size() == 0);
+}
 
 int main()
 {
-    DualCircleList<int> d1;
-
-    for(int i=0; i<5; i++)
-    {
-        d1.insert(0, i);
-        d1.insert(0, 5);
-    }
-    cout << "begin" << endl;
-
-    d1.move(d1.length()-1);
-
-    while(d1.find(5) != -1)
-    {
-        if(d1.current() == 5)
-        {
-            cout << d1.current() << endl;
-            d1.remove(d1.find(d1.current()));
-        }
-        else
-        {
-            d1.pre();
-        }
-    }
-
-    cout << "end" << endl;
-
-//    for(d1.move(0); !d1.end(); d1.next())
-//    {
-//        cout << d1.current() << endl;
-//    }
-
-    for(int i=0; i<d1.length(); i++)
-    {
-        cout << d1.get(i) << endl;
-    }
+    cout << scan("else if( is_quot(code[i]) ) { if((stack.size() == 0) || !is_match(stack.top(), code[i])){stack.push(code[i]); }else if(is_match(stack.top(),code[i])) {stack.pop();}}") << endl;
     return 0;
 }
