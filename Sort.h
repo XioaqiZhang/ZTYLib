@@ -38,8 +38,7 @@ public:
                 }
             }
 
-            //这里老师写的是    min != i  ??
-            if(array[i] != array[min])
+            if(i != min)
             {
                 Swap(array[i], array[min]);
             }
@@ -61,7 +60,7 @@ public:
                 k = j;
             }
 
-            if(array[k] != e)
+            if(k != i)
             {
                 array[k] = e;
             }
