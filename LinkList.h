@@ -214,10 +214,7 @@ public:
             m_current = position(i)->Next;
             m_step = step;
         }
-        else
-        {
-            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
-        }
+
         return ret;
     }
 
