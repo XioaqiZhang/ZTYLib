@@ -1,80 +1,74 @@
 ﻿#include <iostream>
-//#include "StaticStack.h"
-#include "LinkStack.h"
+#include "Sort.h"
+#include "GTree.h"
+#include <stddef.h>
 
 
 using namespace std;
 using namespace ZTYLib;
 
-bool is_left(char c)
-{
-    return ((c == '(') || (c == '<') || (c == '{' ) || (c == '['));
-}
-
-bool is_right(char c)
-{
-    return ((c == ')') || (c == '>') || (c == '}' ) || (c == ']'));
-}
-
-bool is_quot(char c)
-{
-    return ((c == '\'') || (c == '\"'));
-}
-
-bool is_match(char l, char r)
-{
-    return ((l == '(') && (r == ')')) ||
-            ((l == '<') && (r == '>')) ||
-            ((l == '[') && (r == ']')) ||
-            ((l == '{') && (r == '}')) ||
-            ((l == '\'') && (r == '\'')) ||
-            ((l == '\"') && (r == '\"'));
-}
-
-bool scan(const char* code)
-{
-    LinkStack<char> stack;
-    int i = 0;
-    bool ret = true;
-
-    code = (code == NULL)?"":code;
-
-    while(ret && (code[i] != '\0'))
-    {
-        if( is_left(code[i]) )
-        {
-            stack.push(code[i]);
-        }
-        else if( is_right(code[i]) )
-        {
-            if( (stack.size() > 0) && is_match(stack.top(), code[i]) )
-            {
-                stack.pop();
-            }
-            else
-            {
-                ret = false;
-            }
-        }
-        else if( is_quot(code[i]) )
-        {
-            if((stack.size() == 0) || !is_match(stack.top(), code[i]))
-            {
-                stack.push(code[i]);
-            }
-            else if(is_match(stack.top(),code[i]))
-            {
-                stack.pop();
-            }
-        }
-        i++;
-    }
-
-    return ret && (stack.size() == 0);
-}
 
 int main()
 {
-    cout << scan("else if( is_quot(code[i]) ) { if((stack.size() == 0) || !is_match(stack.top(), code[i])){stack.push(code[i]); }else if(is_match(stack.top(),code[i])) {stack.pop();}}") << endl;
+//    try {
+        GTree<char> t;
+        GTreeNode<char>* node = NULL;
+
+        GTreeNode<char> root;
+
+        root.value = 'A';
+        root.parent = NULL;
+
+
+        t.insert(&root);
+
+        node = t.find('A');
+        t.insert('B', node);
+        t.insert('C',node);
+        t.insert('D',node);
+
+        node = t.find('B');
+        t.insert('E',node);
+        t.insert('F',node);
+
+        node = t.find('E');
+        t.insert('K',node);
+        t.insert('L',node);
+
+        node = t.find('C');
+        t.insert('G',node);
+
+        node = t.find('D');
+        t.insert('H',node);
+        t.insert('I',node);
+        t.insert('J',node);
+
+        node = t.find('H');
+        t.insert('M',node);
+
+        t.clear();
+
+        char* s = "KLFGMIJ";
+
+        for(int i=0; i<7; i++)
+        {
+            GTreeNode<char>* node = t.find(s[i]);
+
+            while(node != NULL)
+            {
+                cout << node->value << " ";
+
+                node = dynamic_cast<GTreeNode<char>*>(node->parent);
+            }
+
+            cout << endl;
+        }
+
+
+
+//    } catch () {
+
+//    }
+
     return 0;
 }

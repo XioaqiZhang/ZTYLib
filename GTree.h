@@ -1,4 +1,4 @@
-#ifndef GTREE_H
+﻿#ifndef GTREE_H
 #define GTREE_H
 
 #include "GTreeNode.h"
@@ -57,6 +57,23 @@ protected:
 
         return ret;
     }
+
+    void free(GTreeNode<T>* node)
+    {
+        if(node != NULL)
+        {
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                free(node->child.current());
+            }
+
+            if(node->flag())
+            {
+                delete node;
+            }
+        }
+    }
+
 public:
     bool insert(TreeNode<T>* node) //插入节点
     {
@@ -105,7 +122,7 @@ public:
     {
         bool ret = true;
 
-        GTreeNode<T>* node = new GTreeNode<T>();
+        GTreeNode<T>* node = GTreeNode<T>::NewNode();
 
         if(node != NULL)
         {
@@ -164,6 +181,8 @@ public:
 
     void clear()
     {
+        free(root());
+
         this->m_root = NULL;
     }
 
