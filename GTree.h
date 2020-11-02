@@ -4,6 +4,7 @@
 #include "GTreeNode.h"
 #include "Tree.h"
 #include "Exception.h"
+#include "LinkQueue.h"
 
 namespace ZTYLib
 {
@@ -12,6 +13,12 @@ template <typename T>
 class GTree : public Tree<T>
 {
 protected:
+    LinkQueue<GTreeNode<T>*> m_queue;
+
+    //将拷贝构造函数和赋值操作符重载函数定义为私有，树对象不允许复制
+    GTree(const GTree<T>&);
+    GTree<T>& operator = (const GTree<T>&);
+
     GTreeNode<T>* find(GTreeNode<T>* node, const T& value) const
     {
         GTreeNode<T>* ret = NULL;
@@ -74,7 +81,102 @@ protected:
         }
     }
 
+    void remove(GTreeNode<T>* node, GTree<T>*& ret)
+    {
+        ret = new GTree<T>();
+
+        if(ret == NULL)
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to creat new tree ...");
+        }
+        else
+        {
+            if(root() == node)
+            {
+                this->m_root = NULL;
+            }
+            else
+            {
+                //得到node的父节点的孩子链表
+                LinkList<GTreeNode<T>*>& child = dynamic_cast<GTreeNode<T>*>(node->parent)->child;
+
+                //将当前要删除的节点从父节点删除
+                child.remove(child.find(node));
+
+                node->parent = NULL;
+            }
+
+            ret->m_root = node;
+        }
+
+    }
+
+    int count(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+
+        if(node != NULL)
+        {
+            ret = 1;
+
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                ret += count(node->child.current());
+            }
+        }
+
+        return ret;
+    }
+
+    int height(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+
+        if(node != NULL)
+        {
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                int h = height(node->child.current());
+
+                if(ret < h)
+                {
+                    ret = h;
+                }
+            }
+
+            ret += 1;
+        }
+
+        return ret;
+    }
+
+    int degree(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+
+        if(node != NULL)
+        {
+            ret = node->child.length();
+
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                int d = degree(node->child.current());
+
+                if(ret < d)
+                {
+                    ret = d;
+                }
+            }
+        }
+
+        return ret;
+    }
+
 public:
+    GTree()
+    {
+
+    }
     bool insert(TreeNode<T>* node) //插入节点
     {
         bool ret = true;
@@ -141,12 +243,40 @@ public:
 
     SharedPointer< Tree<T> > remove(const T& value)
     {
-        return NULL;
+        GTree<T>* ret = NULL;
+        GTreeNode<T>* node = find(value);
+
+        if(node == NULL)
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Can not find the node via parameter value ...");
+        }
+        else
+        {
+            remove(node, ret);
+
+            m_queue.clear();
+        }
+
+        return ret;
     }
 
     SharedPointer< Tree<T> > remove(TreeNode<T>* node)
     {
-        return NULL;
+        GTree<T>* ret = NULL;
+        node = find(node);
+
+        if(node == NULL)
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Parameter node is invalid ...");
+        }
+        else
+        {
+            remove(dynamic_cast<GTreeNode<T>*>(node), ret);
+
+            m_queue.clear();
+        }
+
+        return ret;
     }
 
     GTreeNode<T>* find(const T& value) const
@@ -166,17 +296,17 @@ public:
 
     int degree() const
     {
-        return 0;
+        return degree(root());
     }
 
     int count() const
     {
-        return 0;
+        return count(root());
     }
 
     int height() const
     {
-        return 0;
+        return height(root());
     }
 
     void clear()
@@ -184,6 +314,62 @@ public:
         free(root());
 
         this->m_root = NULL;
+
+        m_queue.clear();
+    }
+
+    bool begin()
+    {
+        bool ret= (root() != NULL);
+
+        if(ret)
+        {
+            m_queue.clear();
+            m_queue.add(root());
+        }
+
+        return ret;
+    }
+
+    bool end()
+    {
+        return (m_queue.length() == 0);
+    }
+
+    bool next()
+    {
+        bool ret = (m_queue.length() > 0);
+
+        if(ret)
+        {
+            //node 指向队头元素
+            GTreeNode<T>* node = m_queue.front();
+
+            //将队头元素移除
+            m_queue.remove();
+
+            //将出队列的结点的孩子压入队列
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                m_queue.add(node->child.current());
+            }
+        }
+
+        return ret;
+    }
+
+    T current()
+    {
+        //在遍历过程中
+        if(!end())
+        {
+            return m_queue.front()->value;
+        }
+        else
+        {
+            //遍历未开始/结束
+            THROW_EXCEPTION(InvalidOperationException, "No value in current position ...");
+        }
     }
 
     ~GTree()
