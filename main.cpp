@@ -2,6 +2,7 @@
 #include "Sort.h"
 #include "GTree.h"
 #include <stddef.h>
+#include "BTree.h"
 
 
 using namespace std;
@@ -10,7 +11,7 @@ using namespace ZTYLib;
 
 int main()
 {
-//    try {
+
         GTree<char> t;
         GTreeNode<char>* node = NULL;
 
@@ -46,29 +47,20 @@ int main()
         node = t.find('H');
         t.insert('M',node);
 
-        t.clear();
+//        t.clear();
 
-        char* s = "KLFGMIJ";
+        cout << t.count() << endl;
+        cout << t.height() << endl;
+        cout << t.degree() << endl;
 
-        for(int i=0; i<7; i++)
+        for(t.begin(); !t.end(); t.next())
         {
-            GTreeNode<char>* node = t.find(s[i]);
-
-            while(node != NULL)
-            {
-                cout << node->value << " ";
-
-                node = dynamic_cast<GTreeNode<char>*>(node->parent);
-            }
-
-            cout << endl;
+            cout << t.current() << endl;
         }
 
+    BTree<int> bt;
 
-
-//    } catch () {
-
-//    }
+    BTreeNode<int> btn;
 
     return 0;
 }

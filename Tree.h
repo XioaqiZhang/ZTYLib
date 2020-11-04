@@ -1,4 +1,4 @@
-#ifndef TREE_H
+﻿#ifndef TREE_H
 #define TREE_H
 
 #include "Object.h"
@@ -12,6 +12,9 @@ class Tree : public Object
 {
 protected:
     TreeNode<T>* m_root;
+    //将拷贝构造函数和赋值操作符重载函数定义为私有，树对象不允许复制
+    Tree(const Tree<T>&);
+    Tree<T>& operator = (const Tree<T>&);
 public:
     Tree() {m_root = NULL;}
     virtual bool insert(TreeNode<T>* node)  = 0;

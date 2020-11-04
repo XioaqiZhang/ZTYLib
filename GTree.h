@@ -15,10 +15,6 @@ class GTree : public Tree<T>
 protected:
     LinkQueue<GTreeNode<T>*> m_queue;
 
-    //将拷贝构造函数和赋值操作符重载函数定义为私有，树对象不允许复制
-    GTree(const GTree<T>&);
-    GTree<T>& operator = (const GTree<T>&);
-
     GTreeNode<T>* find(GTreeNode<T>* node, const T& value) const
     {
         GTreeNode<T>* ret = NULL;
