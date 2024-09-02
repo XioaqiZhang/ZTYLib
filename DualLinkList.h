@@ -1,26 +1,26 @@
-﻿#ifndef LINKLIST_H
-#define LINKLIST_H
+﻿#ifndef DUALLINKLIST_H
+#define DUALLINKLIST_H
+
 #include "List.h"
 #include "Exception.h"
-#include <iostream>
-
-using namespace std;
 
 namespace ZTYLib
 {
 template <typename T>
-class LinkList : public List<T>
+class DualLinkList : public List<T>
 {
 protected:
     struct Node : public Object
     {
         T value;
         Node* Next;
+        Node* pre;
     };
 //mutable Node m_header;
     mutable struct : public Object{
         char reserved[sizeof(T)];
         Node* Next;
+        Node* pre;
     } m_header;
 
     int m_length;
@@ -49,9 +49,10 @@ protected:
         delete pn;
     }
 public:
-    LinkList()
+    DualLinkList()
     {
         m_header.Next = NULL;
+        m_header.pre = NULL;
         m_length = 0;
         m_step = 1;
         m_current = NULL;
@@ -72,10 +73,27 @@ public:
             if(node != NULL)
             {
                 Node* current = position(i);
+                Node* next = current->Next;
 
                 node->value = e;
-                node->Next = current->Next;
+
+                node->Next = next;
                 current->Next = node;
+
+                if(current != reinterpret_cast<Node*>(&m_header))
+                {
+                    node->pre = current;
+                }
+                else
+                {
+                    node->pre = NULL;
+                }
+
+                if(next != NULL)
+                {
+                    next->pre = node;
+                }
+
                 m_length++;
             }
             else
@@ -100,13 +118,19 @@ public:
         {
             Node* current = position(i);
             Node* toDel = current->Next;
+            Node* next = toDel->Next;
 
             if(m_current == toDel)
             {
-                m_current = toDel->Next;
+                m_current = next;
             }
 
-            current->Next = toDel->Next;
+            current->Next = next;
+
+            if(next != NULL)
+            {
+                next->pre = current;
+            }
 
             m_length--;
 
@@ -194,14 +218,9 @@ public:
 
     void clear()
     {
-        while(m_header.Next)
+        while(m_length > 0)
         {
-            Node* toDel = m_header.Next;
-            m_header.Next = toDel->Next;
-
-            m_length--;
-
-            destroy(toDel);
+            remove(0);
         }
     }
 
@@ -214,7 +233,10 @@ public:
             m_current = position(i)->Next;
             m_step = step;
         }
-
+        else
+        {
+            THROW_EXCEPTION(IndexOutOfBounds, "index is out of list bounds ...");
+        }
         return ret;
     }
 
@@ -248,7 +270,21 @@ public:
         return (i == m_step);
     }
 
-    ~LinkList()
+    virtual bool pre()
+    {
+        int i=0;
+
+        while((i < m_step) && (!end()))
+        {
+            m_current = m_current->pre;
+            i++;
+        }
+
+        return (i == m_step);
+
+    }
+
+    ~DualLinkList()
     {
         clear();
     }
@@ -256,4 +292,6 @@ public:
 
 }
 
-#endif // LINKLIST_H
+
+
+#endif // DUALLINKLIST_H
